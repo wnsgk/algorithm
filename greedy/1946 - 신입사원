@@ -1,6 +1,7 @@
 /*
 서류가 i등이고 면접이 j등이면 rank[i] = j
 rank[1]부터 rank[n]까지 등수가 앞사람 보다 높은 학생 수를 구하면 됨
+silver - 1
 */
 #include <iostream>
 #include <vector>
