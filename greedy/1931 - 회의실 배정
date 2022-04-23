@@ -1,5 +1,7 @@
-//끝나는 시간으로 정렬한 뒤에 끝나는 시간이 짧으면서 겹치지 않는 것을 greedy로 고름
-
+/*
+끝나는 시간으로 정렬한 뒤에 끝나는 시간이 짧으면서 겹치지 않는 것을 greedy로 고름 
+silver-1
+*/ 
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -31,7 +33,7 @@ int main()
         }
     }
     cout<<ans;
-    
+     
 
     return 0;
 }
