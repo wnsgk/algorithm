@@ -1,0 +1,71 @@
+/*
+G1
+*/
+#include<iostream>
+#include<vector>
+#include<climits>
+#define r 1000000007
+using namespace std;
+long long vn[1000001];
+long long init_mul(vector<long long>& segtree, long long node, long long start, long long end) {
+    if (start == end)    
+        return segtree[node] = vn[start];   
+
+    long long mid = (start + end) / 2;
+
+    return segtree[node] = (init_mul(segtree, node * 2, start, mid) * init_mul(segtree, node * 2 + 1, mid + 1, end))%r;
+}
+long long mul(vector<long long>& segtree, long long node, long long start, long long end, long long left, long long right) {
+    if (left > end || right < start) return 1;
+
+    if (left <= start && end <= right) return segtree[node];
+
+    long long mid = (start + end) / 2;
+    return (mul(segtree, node*2, start, mid, left, right) * mul(segtree, node*2+1, mid+1, end, left, right))%r;
+}
+
+void update(vector<long long>& segtree, long long node, long long start, long long end, long long index, long long multi) {
+    if (index < start || index > end) return; 
+    
+    if (start == end) 
+    {
+        segtree[node] = multi;
+        return;
+    }
+    long long mid = (start + end) / 2;
+    update(segtree, node*2, start, mid, index, multi);
+    update(segtree, node*2+1, mid+1, end, index, multi);
+    segtree[node] = (segtree[node*2]*segtree[node*2+1])%r;
+}
+
+int main()
+{
+	ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    long long n, m, k, a, b, c;
+    cin>>n>>m>>k;
+    vector<long long> mul_tree(n*4+1);
+    for(long long i = 1; i < n+1; i++) 
+    {
+        cin>>vn[i];
+    }
+    
+    init_mul(mul_tree, 1, 1, n);
+    for(long long i = 0; i < m+k; i++)
+    {
+        cin>>a>>b>>c;
+        if(a == 1)
+        {
+            update(mul_tree, 1, 1, n, b, c);
+            vn[b] = c;
+        }
+        else
+        {
+            cout<<mul(mul_tree, 1, 1, n, b, c)<<"\n";
+        }
+    }
+    
+    return 0;
+}
