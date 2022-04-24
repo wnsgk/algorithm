@@ -1,0 +1,69 @@
+/*
+G1
+*/
+#include<iostream>
+#include<vector>
+#include<climits>
+using namespace std;
+long long vn[100001];
+long long init_min(vector<long long>& segtree, long long node, long long start, long long end) {
+    if (start == end)    
+        return segtree[node] = vn[start];   
+
+    long long mid = (start + end) / 2;
+
+    return segtree[node] = min(init_min(segtree, node * 2, start, mid), init_min(segtree, node * 2 + 1, mid + 1, end));
+}
+
+long long init_max(vector<long long>& segtree, long long node, long long start, long long end) {
+    if (start == end)    
+        return segtree[node] = vn[start];   
+
+    long long mid = (start + end) / 2;
+
+    return segtree[node] = max(init_max(segtree, node * 2, start, mid), init_max(segtree, node * 2 + 1, mid + 1, end));
+}
+
+long long find_min(vector<long long>& segtree, long long node, long long start, long long end, long long left, long long right) {
+    if (left > end || right < start) return LLONG_MAX;
+
+    if (left <= start && end <= right) return segtree[node];
+
+    long long mid = (start + end) / 2;
+    return min(find_min(segtree, node*2, start, mid, left, right), find_min(segtree, node*2+1, mid+1, end, left, right));
+}
+
+long long find_max(vector<long long>& segtree, long long node, long long start, long long end, long long left, long long right) {
+    if (left > end || right < start) return LLONG_MIN;
+
+    if (left <= start && end <= right) return segtree[node];
+
+    long long mid = (start + end) / 2;
+    return max(find_max(segtree, node*2, start, mid, left, right), find_max(segtree, node*2+1, mid+1, end, left, right));
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    long long n, m, a, b;
+    cin>>n>>m;
+    vector<long long> min_tree(n*4+1);
+    vector<long long> max_tree(n*4+1);
+    for(long long i = 1; i < n+1; i++) 
+    {
+        cin>>vn[i];
+    }
+    
+    init_min(min_tree, 1, 1, n);
+    init_max(max_tree, 1, 1, n);
+    for(long long i = 0; i < m; i++)
+    {
+        cin>>a>>b;
+        cout<<find_min(min_tree, 1, 1, n, a, b)<<" ";
+        cout<<find_max(max_tree, 1, 1, n, a, b)<<"\n";
+    }
+    
+    return 0;
+}
