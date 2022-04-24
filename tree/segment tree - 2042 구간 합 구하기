@@ -1,0 +1,53 @@
+/*
+G1
+*/
+
+#include <iostream>
+using namespace std;
+long long arr[1000001],tree[4000001];
+long long treemake(long long s,long long e,long long node)
+{
+	long long mid;
+	if(s==e) return tree[node]=arr[s];
+	mid=(s+e)/2;
+	return tree[node]=treemake(s,mid,node*2)+treemake(mid+1,e,node*2+1);
+}
+long long sum(long long s,long long e,long long node,long long l,long long r)
+{
+	if(l>e||r<s) return 0;
+	if(l<=s&&e<=r) return tree[node];
+	long long mid=(s+e)/2;
+	
+	return sum(s,mid,node*2,l,r)+sum(mid+1,e,node*2+1,l,r);
+}
+void update(long long s,long long e,long long node,long long idx,long long val)
+{
+	if(idx<s||idx>e) return;
+	tree[node]+=val;
+	if(s==e) return;
+	long long mid=(s+e)/2;
+	update(s,mid,node*2,idx,val);
+	update(mid+1,e,node*2+1,idx,val);
+}
+
+int main()
+{
+	ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+	long long n,m,a,b,k,c;
+	cin>>n>>m>>k;
+	for(long long i=1;i<=n;i++) cin>>arr[i];
+	treemake(1,n,1);
+	for(long long i=0;i<m+k;i++)
+	{
+		cin>>a>>b>>c;
+		if(a==1)
+		{
+			update(1,n,1,b,c-arr[b]);
+			arr[b]=c;	
+		} 
+		else cout<<sum(1,n,1,b,c)<<"\n";
+	}
+}
