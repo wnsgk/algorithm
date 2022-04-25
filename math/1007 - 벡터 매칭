@@ -1,0 +1,61 @@
+/*
+G2
+*/
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+long long sumx = 0;
+long long sumy = 0;
+double mn = 2000000000.0;
+int n;
+void dfs(vector<pair<int,int>>&v, int plus, int minus)
+{
+    if(plus == 0 && minus == 0)
+    {
+        mn = min(mn, sqrt(sumx*sumx+sumy*sumy));
+        return;
+    }
+    if(plus > 0)
+        dfs(v, plus-1, minus);
+    if(minus > 0)
+    {
+        sumx -= v[n-plus-minus].first*2;
+        sumy -= v[n-plus-minus].second*2;
+        dfs(v, plus, minus-1);
+        sumx += v[n-plus-minus].first*2;
+        sumy += v[n-plus-minus].second*2;
+    }
+}
+
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	cout.precision(10);
+	
+    int T;
+    cin>>T;
+    for(int t = 0; t < T; t++)
+    {
+        int a, b;
+        mn = 2000000000.0;
+        sumx = 0;
+        sumy = 0;
+        cin>>n;
+        vector<pair<int, int>> v(n);
+        for(int i = 0; i < n; i++)
+        {
+            cin>>a>>b;
+            v[i].first = a;
+            v[i].second = b;
+            sumx += a;
+            sumy += b;
+        }
+        dfs(v, n/2, n/2);
+        cout<<mn<<"\n";
+    }
+    return 0;
+}
