@@ -1,0 +1,58 @@
+/*
+G3
+*/
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    
+    int T, n;
+    cin>>T;
+    for(int t = 0; t < T; t++)
+    {
+        cin>>n;
+        vector<int> stu(n+1);
+        vector<pair<int,int>> team(n+1);
+        int ans = 0;
+        for(int i = 1; i < n+1; i++)
+        {
+            cin>>stu[i];
+            if(stu[i] == i) 
+            {
+                team[i] = make_pair(1,i);
+                ans++;
+            }
+        }
+        for(int i = 1; i < n+1; i++)
+        {
+            if(team[i].first != 0) continue;
+            bool make_team = true;
+            int next = i, cnt = 1;
+            while(1)
+            {
+                team[next] = make_pair(cnt,i);
+                next = stu[next];
+                if(team[next].first != 0)
+                {
+                    if(team[next].second != i)
+                    {
+                        make_team = false;
+                        break;
+                    }
+                    ans+=cnt-team[next].first+1;
+                    break;
+                }
+
+                cnt++;
+            }
+        }
+        cout<<n-ans<<endl;
+        
+    }
+    return 0;
+}
