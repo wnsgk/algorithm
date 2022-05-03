@@ -1,0 +1,34 @@
+#include <string>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+unordered_map<long long, long long> m;
+    
+long long Find(long long k)
+{
+    if(m[k] == 0) return k;
+    return m[k] = Find(m[k]);
+}
+
+vector<long long> solution(long long k, vector<long long> room_number) {
+    vector<long long> answer;
+    for(int i = 0; i < room_number.size(); i++)
+    {
+        if(m[room_number[i]] == 0)
+        {
+            m[room_number[i]] = room_number[i]+1;
+            answer.push_back(room_number[i]);
+        }
+        else
+        {
+            long long k = Find(room_number[i]);
+           
+            m[k] = k+1;
+            answer.push_back(k);
+        }
+        
+    }
+    return answer;
+}
