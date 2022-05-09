@@ -1,0 +1,87 @@
+/*
+G1
+*/
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int n, m, ox, oy;
+vector<vector<char>> board(10, vector<char>(10));
+int dx[] = {0, 1, 0, -1};
+int dy[] = {1, 0, -1, 0};
+
+int find_path(int path, int rx, int ry, int bx, int by, int depth)
+{
+    int a=0, b=0;
+    if(depth == 11) return 11;
+    while(board[bx + dx[path]][by + dy[path]] != '#')
+    {
+        a++;
+        bx += dx[path];
+        by += dy[path];
+        if(bx == ox && by == oy) return 11;
+    }
+    while(board[rx + dx[path]][ry + dy[path]] != '#')
+    {
+        b++;
+        rx += dx[path];
+        ry += dy[path];
+        if(rx == ox && ry == oy) return depth;
+    }
+    if(rx == bx && ry == by)
+    {
+        if(a > b)
+        {
+            bx-=dx[path];
+            by-=dy[path];
+        }
+        else
+        {
+            rx-=dx[path];
+            ry-=dy[path];
+        }
+    }
+    int res = 11;
+    for(int i = 0; i < 4; i++)
+    {
+        if(i==path) continue;
+        res = min(res, find_path(i, rx, ry, bx, by, depth+1));
+    }
+    return res;
+}
+
+int main()
+{
+    cin>>n>>m;
+    int rx, ry, bx, by;
+    for(int i = 0; i < n; i++)   
+        for(int j = 0; j < m; j++)
+        {
+            cin>>board[i][j];
+            if(board[i][j] == 'R')
+            {
+                rx = i;
+                ry = j;
+            }
+            if(board[i][j] == 'B')
+            {
+                bx = i;
+                by = j;
+            }
+            if(board[i][j] == 'O')
+            {
+                ox = i;
+                oy = j;
+            }
+        }   
+    int ans = 11;
+    for(int i = 0; i < 4; i++)  // 오 아 왼 위
+    {
+        ans = min(ans ,find_path(i, rx, ry, bx, by, 1));
+    }
+    if(ans < 11) cout<<ans;
+    else cout<<-1;
+    return 0;
+}
