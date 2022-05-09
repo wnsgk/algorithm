@@ -1,0 +1,84 @@
+/*
+
+*/
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+int dx[] = {0,0,-1,1};
+int dy[] = {1,-1,0,0};
+vector<int> cube(6); // 위아래 동서 남북
+    
+void change_cube(int mode)
+{
+    if(mode == 0)
+    {
+        int a = cube[1];
+        cube[1] = cube[2];
+        cube[2] = cube[0];
+        cube[0] = cube[3];
+        cube[3]  = a;
+    }
+    else if(mode == 1)
+    {
+        int a = cube[3];
+        cube[3] = cube[0];
+        cube[0] = cube[2];
+        cube[2] = cube[1];
+        cube[1]  = a;
+    }
+    else if(mode == 3)
+    {
+        int a = cube[4];
+        cube[4] = cube[0];
+        cube[0] = cube[5];
+        cube[5] = cube[1];
+        cube[1]  = a;
+    }
+    else
+    {
+        int a = cube[1];
+        cube[1] = cube[5];
+        cube[5] = cube[0];
+        cube[0] = cube[4];
+        cube[4]  = a;
+    }
+}
+
+int main()
+{
+    int n, m, x, y, k, a;
+    cin>>n>>m>>x>>y>>k; 
+    vector<vector<int>> board(n, vector<int>(m));
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < m; j++)
+            cin>>board[i][j];
+
+    cube[1] = board[x][y];
+    board[x][y] = 0;
+    for(int i = 0; i < k; i++)
+    {
+        cin>>a;
+        int nx = x + dx[a-1];
+        int ny = y + dy[a-1];
+        if(nx < 0 || ny < 0 || nx >= n || ny >= m) continue;
+        x = nx;
+        y = ny;
+        change_cube(a-1);
+        if(board[x][y] == 0)
+        {
+            board[x][y] = cube[1];
+            //cube[1] = 0;
+        }
+        else
+        {
+            cube[1] = board[x][y];
+            board[x][y] = 0;
+        }
+        cout<<cube[0]<<endl;
+        
+    }
+
+    return 0;
+}
