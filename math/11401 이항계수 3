@@ -1,0 +1,38 @@
+/*
+ * 페르마 소정리
+ * p가 소수이고 a가 p의 배수가 아니면 a^(p-1) = 1 (mod p)
+ * n!(n-k)!^(p-2) mod(p)과 같음.
+ * G1
+ */
+#include <iostream>
+
+using namespace std;
+
+long long p = 1000000007;
+
+long long pow_(int a, int b)
+{
+    if(b == 0) return 1;
+    long long c = pow_(a, b/2);
+    if(b % 2 == 1) return (a*c%p)*c%p;
+    else
+    {
+        return c*c%p;
+    }
+}
+
+int main()
+{
+    iso
+    int n, k;
+    cin>>n>>k;
+    long long tmp = 1, a = 1;
+    for(long long i = n; i > n-k; i--) tmp = tmp*i%p;
+    for(long long i = k; i > 0; i--) a = a*i%p;
+    
+    a = pow_(a, p-2);
+    
+    cout<<a*tmp%p;
+
+    return 0;
+}
