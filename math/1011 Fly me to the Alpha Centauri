@@ -1,0 +1,47 @@
+/*
+ * G5
+ */
+
+#include<iostream>
+
+using namespace std;
+
+int main()
+{
+	  ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int t;
+    cin>>t;
+    while(t--)
+    {
+        int x, y;
+        cin>>x>>y;
+        y -= x;
+        x = 0;
+        int cnt = 0, sum = 1, next = 1;
+        while(1)
+        {
+            if(y-x > sum)
+            {
+                x += next;
+                next++;
+                sum+=next;
+                cnt++;
+            }
+            else if(y-x == sum)
+            {
+                cnt += next;
+                break;
+            }
+            else
+            {
+                sum -= next;
+                next--;
+            }
+        }
+        cout<<cnt<<"\n";
+    }
+    return 0;
+}
