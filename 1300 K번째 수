@@ -1,0 +1,33 @@
+/* k 값에 도달할 때 까지 binary search
+ * G2
+ */
+#include <iostream>
+
+using namespace std;
+
+long long n, k;
+
+long long binary_search(long long l, long long r)
+{
+    long long mid = (l+r)/2;
+    if(l == r) return l;
+    long long ans = 0;
+    for(int i = 1; i < n+1; i++)
+    {
+        ans += min(mid/i, n);
+    }
+    if(ans >= k) return binary_search(l, mid);
+    else return binary_search(mid+1, r);
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    cin>>n>>k;
+    long long l = 0, r = n*n;
+    cout<<binary_search(l, r);
+    return 0;
+}
