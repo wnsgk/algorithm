@@ -1,0 +1,57 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+long long x = 1000000007;
+
+void div_100(vector<vector<long long>>& v)
+{
+    v[0][0] %= x;
+    v[0][1] %= x;
+    v[1][0] %= x;
+    v[1][1] %= x;
+}
+
+void multi(vector<vector<long long>>& a, vector<vector<long long>>& b)
+{
+    long long a00 = a[0][0]*b[0][0] + a[0][1]*b[1][0];
+    long long a01 = a[0][0]*b[0][1] + a[0][1]*b[1][1];
+    long long a10 = a[1][0]*b[0][0] + a[1][1]*b[1][0];
+    long long a11 = a[1][0]*b[0][1] + a[1][1]*b[1][1];
+    a[0][0] = a00;
+    a[0][1] = a01;
+    a[1][0] = a10;
+    a[1][1] = a11;
+}
+
+vector<vector<long long>> vec_pow(vector<vector<long long>>& a, long long n)
+{
+    if(n == 1) return a;
+    vector<vector<long long>> v = vec_pow(a, n/2);
+    if(n % 2 == 0)
+    {
+        multi(v, v);
+        div_100(v);
+        return v;
+    }
+    else
+    {
+        multi(v, v);
+        multi(v, a);
+        div_100(v);
+        return v;
+    }    
+}
+
+int main()
+{
+    long long n;
+    cin>>n;
+    vector<vector<long long>> v(2, vector<long long>(2));
+    v[0][0] = 1;
+    v[0][1] = 1;
+    v[1][0] = 1;
+    vector<vector<long long>> v2;
+    v2 = vec_pow(v, n);
+    cout<<v2[1][0];
+    return 0;
+}
