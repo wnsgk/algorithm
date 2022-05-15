@@ -1,0 +1,91 @@
+/* 
+ * 느리게 갱신되는 세그먼트 트리
+ * P4
+ */
+#include<iostream>
+
+using namespace std;
+long long vn[1000001], segtree[4000001], lazy[4000001];
+long long init_segtree(long long node, long long start, long long end) {
+    if (start == end)    
+        return segtree[node] = vn[start];   
+
+    long long mid = (start + end) / 2;
+
+    return segtree[node] = init_segtree(node * 2, start, mid) + init_segtree(node * 2 + 1, mid + 1, end);
+}
+
+void update_lazy(int node, int start, int end) {
+    if (lazy[node] != 0) {
+        segtree[node] += (end - start + 1) * lazy[node];
+        if (start != end) {
+            lazy[node * 2] += lazy[node];
+            lazy[node * 2 + 1] += lazy[node];
+        }
+        lazy[node] = 0;
+    }
+}
+
+long long sum(long long node, long long start, long long end, long long left, long long right) {
+    update_lazy(node, start, end);
+    
+    if (left > end || right < start) return 0;
+
+    if (left <= start && end <= right) return segtree[node];
+
+    long long mid = (start + end) / 2;
+    return sum(node*2, start, mid, left, right) + sum(node*2+1, mid+1, end, left, right);
+}
+
+void update(long long node, long long start, long long end, long long left, long long right, long long val) {
+    
+    update_lazy(node, start, end);
+    
+    if (right < start || left > end) return;
+
+    if (left <= start && end <= right) {
+        segtree[node] += (end - start + 1) * val;
+        if (start != end) {
+            lazy[node * 2] += val;
+            lazy[node * 2 + 1] += val;
+        }
+        return;
+    }
+    long long mid = (start + end) / 2;
+    update(node*2, start, mid, left, right, val);
+    update(node*2+1, mid+1, end, left, right, val);
+    segtree[node] = segtree[node*2] + segtree[node*2+1];
+}
+
+int main()
+{
+	ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    long long n, m, k, a, b;
+    long long c, d;
+    cin>>n>>m>>k;
+
+    for(long long i = 1; i < n+1; i++) 
+    {
+        cin>>vn[i];
+    }
+    
+    init_segtree(1, 1, n);
+    for(long long i = 0; i < m+k; i++)
+    {
+        cin>>a>>b>>c;
+        if(a == 1)
+        {
+            cin>>d;
+            update(1, 1, n, b, c, d);
+        }
+        else
+        {
+            cout<<sum(1, 1, n, b, c)<<"\n";
+        }
+    }
+    
+    return 0;
+}
