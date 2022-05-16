@@ -1,0 +1,80 @@
+/*
+ * 최소값의 인덱스를 출력
+ * G1
+ */
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+long long vn[100001];
+
+long long min_index(int x, int y)
+{
+    if(x == -1) return y;
+    if(y == -1) return x;
+    if(vn[x] == vn[y]) return x < y ? x : y;
+    else return vn[x] < vn[y] ? x : y;
+}
+
+long long init_min(vector<long long>& segtree, long long node, long long start, long long end)
+{
+    if (start == end)    
+        return segtree[node] = start;   
+
+    long long mid = (start + end) / 2;
+
+    return segtree[node] = min_index(init_min(segtree, node * 2, start, mid), init_min(segtree, node * 2 + 1, mid + 1, end));
+}
+
+
+long long find_min(vector<long long>& segtree, long long node, long long start, long long end, long long left, long long right)
+{
+    if (left > end || right < start) return -1;
+
+    if (left <= start && end <= right) return segtree[node];
+
+    long long mid = (start + end) / 2;
+    return min_index(find_min(segtree, node*2, start, mid, left, right), find_min(segtree, node*2+1, mid+1, end, left, right));
+}
+
+long long update(vector<long long>& segtree, long long node, long long start, long long end, long long val)
+{
+	if (start > val || end < val) return segtree[node];
+	if (start == end) return segtree[node];
+	
+    long long mid = (start + end) / 2;
+    return segtree[node] = min_index(update(segtree, node*2, start, mid, val), update(segtree, node*2+1, mid+1, end, val));
+}
+
+int main()
+{
+	ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    long long n, m, a, b, c;
+    cin>>n;
+    vector<long long> min_tree(n*4+1);
+    for(long long i = 1; i < n+1; i++) 
+    {
+        cin>>vn[i];
+    }
+    cin>>m;
+    init_min(min_tree, 1, 1, n);
+    for(long long i = 0; i < m; i++)
+    {
+        cin>>a>>b>>c;
+        if(a == 1)
+        {
+            vn[b] = c;
+            update(min_tree, 1, 1, n, b);
+        }
+        else
+        {
+            cout<<find_min(min_tree, 1, 1, n, b, c)<<"\n";
+        }
+    }
+    
+    return 0;
+}
