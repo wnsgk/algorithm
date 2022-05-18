@@ -1,0 +1,90 @@
+/*
+ * HOFCROST-KARP algorithm
+ * 모든 간선이 1일 때 사용 시간복잡도 = O(E√V);
+ * 
+ */
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+const int MAX = 2002;
+const int INF = 1000000000;
+ 
+int n, m, A[MAX], B[MAX], dist[MAX];
+bool visit[MAX];
+vector<int> adj[MAX];
+ 
+void bfs(){
+    queue<int> Q;
+    for(int i=0; i<n*2; i++){
+        if(!visit[i]){
+            dist[i] = 0;
+            Q.push(i);
+        }
+        else dist[i] = INF;
+    }
+ 
+    while(!Q.empty()){
+        int a = Q.front();
+        Q.pop();
+        for(int b: adj[a]){
+            if(B[b] != -1 && dist[B[b]] == INF){
+                dist[B[b]] = dist[a] + 1;
+                Q.push(B[b]);
+            }
+        }
+    }
+}
+ 
+bool dfs(int a){
+    for(int b: adj[a]){
+        if(B[b] == -1 || dist[B[b]] == dist[a]+1 && dfs(B[b])){
+            visit[a] = true;
+            A[a] = b;
+            B[b] = a;
+            return true;
+        }
+    }
+    return false;
+}
+ 
+ 
+ 
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    
+    cin>>n>>m;
+    for(int i=0; i<n; i++){
+        int s;
+        cin>>s;
+        for(int j=0; j<s; j++){
+            int k;
+            cin>>k;
+            adj[i*2].push_back(k-1);
+            adj[i*2+1].push_back(k-1);
+        }
+    }
+    
+    int cnt = 0;
+    
+    fill(A, A+MAX, -1);
+    fill(B, B+MAX, -1);
+    while(1){
+        bfs();
+
+        int flow = 0;
+        for(int i=0; i<n*2; i++)
+            if(!visit[i] && dfs(i)) flow++;
+
+        if(flow == 0) break;
+        cnt += flow;
+    }
+    
+    cout<<cnt;
+
+}
