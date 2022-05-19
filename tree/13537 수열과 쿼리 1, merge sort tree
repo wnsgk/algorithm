@@ -1,0 +1,88 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int vn[100001];
+vector<vector<int>> segtree(400001);
+
+vector<int> merge(vector<int> v1, vector<int> v2)
+{
+    vector<int> v;
+    int i = 0, j = 0;
+    while(i<v1.size() && j<v2.size())
+    {
+        if(v1[i] > v2[j])
+        {
+            v.push_back(v2[j]);
+            j++;
+        }
+        else
+        {
+            v.push_back(v1[i]);
+            i++;
+        }
+    }
+    while(i<v1.size())
+    {
+        v.push_back(v1[i]);
+        i++;
+    }
+    while(j<v2.size())
+    {
+        v.push_back(v2[j]);
+        j++;
+    }
+    return v;
+}
+
+void init_segtree(int node, int start, int end) {
+    if (start == end)   
+    {
+        segtree[node].push_back(vn[start]);
+        return;
+    }
+    int mid = (start + end) / 2;
+    init_segtree(node * 2, start, mid);
+    init_segtree(node * 2 + 1, mid + 1, end);
+    segtree[node] = merge(segtree[node*2], segtree[node*2+1]);
+    return;
+}
+
+int find_k(int node, int start, int end, int left, int right, int k) {
+    if (left > end || right < start) return 0;
+
+    if (left <= start && end <= right)
+    {
+        int a = segtree[node].end() - upper_bound(segtree[node].begin(), segtree[node].end(), k);
+        return a;
+    }
+
+    long long mid = (start + end) / 2;
+    return find_k(node*2, start, mid, left, right, k) + find_k(node*2+1, mid+1, end, left, right, k);
+}
+
+int main()
+{
+	ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n, m, a, b, c;
+    cin>>n;
+
+    for(int i = 1; i < n+1; i++) 
+    {
+        cin>>vn[i];
+    }
+    cin>>m;
+    init_segtree(1, 1, n);
+    for(int i = 0; i < m; i++)
+    {
+        cin>>a>>b>>c;
+        cout<<find_k(1, 1, n, a, b, c)<<"\n";
+    }
+    
+    return 0;
+}
