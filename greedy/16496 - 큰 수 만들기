@@ -1,0 +1,37 @@
+/*
+ * 문자열 a+b, b+a를 한뒤에 a>b이면 a가 먼저 와야하고 아니면 b가 먼저 와야됨.
+ * P5
+ */
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+string s;
+
+bool cmp(string a, string b)
+{
+    string c = a;
+    a+=b;
+    b+=c;
+    return atoll(a.c_str()) > atoll(b.c_str());
+}
+
+int main() {
+    int n, a;
+    cin>>n;
+    vector<string> v(n);
+    for(int i = 0; i < n; i++)
+    {
+        cin>>a;
+        v[i] = to_string(a);
+    }
+    sort(v.begin(), v.end(), cmp);
+    if(v[0] == "0") cout<<0;
+    else
+    {
+        for(int i = 0; i < n; i++) cout<<v[i];
+    }
+    return 0;
+}
