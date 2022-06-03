@@ -1,0 +1,52 @@
+/* 에라토스네테스의 체
+ * 골드바흐의 추측 2보다 큰 모든 짝수는 두 소수의 합으로 나타낼 수 있다.
+ * G4
+ */
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> eratos(1000001, 1);
+vector<int> prime;
+
+void make_prime() {
+    ios::sync_with_stdio(false);
+    int n = 1000001;
+    for(int i = 2; i < n; i++) {
+        if(eratos[i] == 0) continue;
+        for(int j = i+i; j < n; j += i) {
+            eratos[j] = 0;
+        }
+    }
+    for(int i = 2; i < n; i++) {
+        if(eratos[i] == 1) prime.push_back(i);
+    }
+}
+
+int gold(int n) {
+    for(int i = 0; i < prime.size(); i++) {
+        if(eratos[n-prime[i]] == 1) return prime[i];
+    }
+    return -1;
+}
+
+int main() {
+    int n;
+    cin>>n;
+    
+    make_prime();
+    if(n < 8) cout<<-1;
+    else if(n%2 == 0) {
+        int a = gold(n-4);
+        cout<<"2 2 "<<a<<" "<<n-4-a;
+    }
+    else {
+        if(n == 9) cout<<"2 2 2 3";
+        else {
+            int a = gold(n-5);
+            cout<<"2 3 "<<a<<" "<<n-5-a;
+        }
+    }
+    return 0;
+}
