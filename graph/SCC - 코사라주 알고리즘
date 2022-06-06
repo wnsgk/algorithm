@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+ 
+int n, e;
+vector<vector<int>> v(10001);
+vector<vector<int>> rv(10001);
+vector<vector<int>> SCC;
+vector<int> rev_search;
+ 
+vector<int> visit(10001), rvisit(10001);
+
+void dfs(int s){
+    
+    visit[s] = true;
+    
+    for(int i = 0; i < v[s].size(); i++){
+        int next = v[s][i];
+        if(visit[next]) continue;
+        dfs(next);
+    }
+    rev_search.push_back(s);
+}
+ 
+void rev_dfs(int s, vector<int> &temp){
+    
+    rvisit[s] = true;
+    temp.push_back(s);
+    
+    for(int i = 0; i < rv[s].size(); i++){
+        int next = rv[s][i];
+        if(rvisit[next]) continue;
+        
+        rev_dfs(next, temp);
+    }
+}
+
+ 
+int main(){
+    ios_base::sync_with_stdio(false); 
+    cin.tie(0); 
+    cout.tie(0);
+    
+    int a, b;
+    cin>>n>>e;
+    for(int i = 0; i < e; i++){
+        cin>>a>>b;
+        v[a].push_back(b);
+        rv[b].push_back(a);
+    }
+    for(int i = 1; i <= n; i++){
+        if(visit[i]) continue;
+        dfs(i);
+    }
+    
+    vector<int> tmp;
+    for(int i = rev_search.size()-1; i >= 0; i--){
+        int s = rev_search[i];
+        if(rvisit[s]) continue;
+        rev_dfs(s, tmp);
+        SCC.push_back(tmp);
+        tmp.clear();
+    }
+    
+    for(int i = 0; i < SCC.size(); i++) sort(SCC[i].begin(), SCC[i].end());
+    sort(SCC.begin(), SCC.end());
+    
+    cout<<SCC.size()<<"\n";
+    
+    for(int i = 0; i < SCC.size(); i++){
+        for(int j = 0; j < SCC[i].size(); j++){
+            cout<<SCC[i][j]<<" ";
+        }
+        cout<<"-1\n";
+    }
+    
+    return 0;
+}
