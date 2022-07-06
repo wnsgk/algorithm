@@ -14,8 +14,8 @@ int s = MAX_V-2, e = MAX_V-1, INF = 1000000000;
 int main(){
     ios::sync_with_stdio(false);
     cin.tie(0);
-    int c[MAX_V][MAX_V] = {0}, d[MAX_V][MAX_V] = {0}, f[MAX_V][MAX_V] = {0};
-    vector<int> adj[MAX_V];
+    int c[802][802] = {0}, d[802][802] = {0}, f[802][802] = {0};
+    vector<int> adj[802];
     
     int n, m, a, w, mn;
     cin>>n>>m;
