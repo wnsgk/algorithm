@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+    
+	int n;
+	cin>>n;
+	vector<int> v(n);
+	for(int i = 0; i < n; i++) cin>>v[i];
+	vector<int> v1(v), idx(10001, -1);
+	sort(v1.begin(), v1.end());
+	for(int i = 0; i < n; i++) {
+	    idx[v1[i]] = i;
+	}
+	int ret = 0;
+	for(int i = 0; i < n; i++){
+	    if(idx[v[i]] == i) continue;
+	    int mn = 100000;
+	    int ans = 0;
+	    int cnt = 0;
+	    int j = i;
+	    vector<int> tmp(10001);
+	    tmp[j] = 1;
+	    while(1){
+	        cnt++;
+	        ans += v[j];
+	        mn = min(mn, v[j]);
+	        int next = idx[v[j]];
+	        v[j] = v1[j];
+	        if(tmp[next] == 1) break;
+	        tmp[next] = 1;
+	        j = next;
+	    }
+	    
+	    ans += min((cnt-2)*mn, mn+(cnt+1)*v1[0]);
+	    ret += ans;
+	}
+	cout<<ret;
+	return 0;
+}
