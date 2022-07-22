@@ -20,26 +20,32 @@ long long pollard_rho(long long n){
     
     long long a, b, c, d;
     a = b = rand() % (n-2) + 2;
-    c = rand() % (n-1) + 1;
+    c = rand() % 20 + 1;
     d = 1;
+    
     while(d == 1){
-        a = ((a * a % n) + c + n) % n;
-        b = ((b * b % n) + c + n) % n;
-        b = ((b * b % n) + c + n) % n;
+        a = (((__int128)a * a % n) + c + n) % n;
+        b = (((__int128)b * b % n) + c + n) % n;
+        b = (((__int128)b * b % n) + c + n) % n;
         d = gcd(abs(a - b), n);
         if (d == n) return pollard_rho(n);
     }
+    
     if(is_prime(d)) return d;
     else return pollard_rho(d);
 }
 
 vector<long long> prlist(long long n){
+    
     vector<long long> v;
+    
     while(n > 1) {
         long long d = pollard_rho(n);
         v.push_back(d);
         n /= d;
     }
+    
+    sort(v.begin(), v.end());
     
     return v;
 }
