@@ -31,11 +31,15 @@ bool miller_rabin(long long x, long long a){
 }
 
 bool is_prime(long long x) {
+    
     int p[12] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
+	
 	for (auto& i : p) {
 		if (x == i) return true;
-		if (x > 40 && miller_rabin(x, i)) return false;
+		if (x > 40 && !miller_rabin(x, i)) return false;
 	}
+
 	if (x <= 40) return false;
+	
 	return true;
 }
