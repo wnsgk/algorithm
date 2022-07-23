@@ -1,0 +1,81 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+long long vn[1000001], segtree[4000001];
+long long init_segtree(long long node, long long start, long long end) {
+    if (start == end)    
+        return segtree[node] = vn[start];   
+
+    long long mid = (start + end) / 2;
+
+    return segtree[node] = init_segtree(node * 2, start, mid) + init_segtree(node * 2 + 1, mid + 1, end);
+}
+
+long long sum(long long node, long long start, long long end, long long left, long long right) {
+    if (left > end || right < start) return 0;
+
+    if (left <= start && end <= right) return segtree[node];
+
+    long long mid = (start + end) / 2;
+    return sum(node*2, start, mid, left, right) + sum(node*2+1, mid+1, end, left, right);
+}
+
+void update(long long node, long long start, long long end, long long index, long long diff) {
+    if (index < start || index > end) return; 
+    segtree[node] += diff; 
+
+    if (start == end) return;
+    long long mid = (start + end) / 2;
+    update(node*2, start, mid, index, diff);
+    update(node*2+1, mid+1, end, index, diff);
+}
+
+int main()
+{
+	ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    long long n, m, k, a, b;
+    long long c, d, j=0;
+    cin>>n;
+
+    for(long long i = 1; i < n+1; i++) 
+    {
+        cin>>vn[i];
+    }
+    cin>>m;
+    init_segtree(1, 1, n);
+    vector<pair<int,int>> v1;
+    vector<pair<pair<int,int>,pair<int,int>>> v2;
+    for(long long i = 0; i < m; i++)
+    {
+        cin>>a>>b>>c;
+        if(a == 1){
+            v1.push_back({b, c});
+        }
+        else{
+            cin>>d;
+            v2.push_back({{b,j++}, {c,d}});
+        }
+    }
+    vector<long long> ans(v2.size()); 
+    sort(v2.begin(), v2.end());
+    j = 0;
+    bool finish = false;
+    for(int i = -1; i < (int)v1.size(); i++){
+        if(i >= 0) update(1, 1, n, v1[i].first, v1[i].second - vn[v1[i].first]);
+        vn[v1[i].first] = v1[i].second;
+        while(v2[j].first.first == i+1){
+            ans[v2[j].first.second] = sum(1, 1, n, v2[j].second.first, v2[j].second.second);
+            j++;
+            if(j == v2.size()){
+                finish = true;
+                break;
+            }
+        }
+        if(finish) break;
+    }
+    for(int i = 0; i < v2.size(); i++) cout<<ans[i]<<"\n";
+    return 0;
+}
