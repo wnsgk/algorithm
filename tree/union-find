@@ -1,17 +1,22 @@
-int root[MAX_SIZE];
-for (int i = 0; i < MAX_SIZE; i++)
-    parent[i] = i;
+vector<int> v(500001);
 
-int find(int x) {
-    if (root[x] == x) return x;
-    return find(root[x]);
+int getParent(int x) {
+    if (v[x] == x) return x;
+    return v[x] = getParent(v[x]);
 }
 
-void union(int x, int y){
-    x = find(x);
-    y = find(y);
+int findParent(int a, int b){
+    a = getParent(a);
+    b = getParent(b);
+    if(a == b) return true;
+    else return false;
+}
 
-    root[y] = x;
+void union_(int a, int b){
+    a = getParent(a);
+    b = getParent(b);
+    if(b > a) v[a] = b;
+    else v[b] = a;
 }
 
 //가중법칙 : 노드가 많은 쪽을 root로 하면 O(logn)이 됨.
