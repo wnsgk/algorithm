@@ -1,0 +1,12 @@
+vector<string> parsing(string s){
+    vector<string> vs;
+    int prev = 0;
+    for(int i = 0; i < s.length(); i++){
+        if(s[i] == ' '){
+            vs.push_back(s.substr(prev, i-prev));
+            prev = i+1;
+        }
+    }
+    if(prev != s.length()) vs.push_back(s.substr(prev));
+    return vs;
+}
