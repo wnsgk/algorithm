@@ -1,0 +1,112 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<vector<int>> v(49, vector<int>(49));
+int n, m, d, p, ans = 0, s;
+int dx[4] = {0, 1, 0, -1};
+int dy[4] = {1, 0, -1, 0};
+int ddx[5] = {0, -1, 1, 0, 0};
+int ddy[5] = {0, 0, 0, -1, 1};
+
+void solve(){
+    vector<vector<int>> tmp(v), t(49, vector<int>(49));
+    int x = s, y = s, score = 0;
+    for(int i = 0; i < p; i++){
+        x += ddx[d];
+        y += ddy[d];
+        tmp[x][y] = 0;
+    }
+    
+    stack<pair<int,int>> st;
+    x=0;
+    y=-1;
+    int e=0;
+
+    while(x != s || y != s){
+        int nx = x + dx[e];
+        int ny = y + dy[e];
+        if(nx < 0 || nx>=n || ny < 0 || ny >= n || tmp[nx][ny] == 4) e = (1+e)%4;
+        x += dx[e];
+        y += dy[e];
+        if(tmp[x][y] == 0) {
+            tmp[x][y] = 4;
+            continue;
+        }
+        if(st.empty()){
+            st.push({tmp[x][y], 1});
+            tmp[x][y] = 4;
+            continue;
+        }
+        if(st.top().first == tmp[x][y]) st.top().second++;
+        else {
+            if(st.top().second > 3) {
+                score += st.top().first*st.top().second;
+                st.pop();
+            }
+            if(!st.empty() && st.top().first == tmp[x][y]) {
+                st.top().second++;
+            }
+            else {
+                st.push({tmp[x][y], 1});
+            }
+        }
+        tmp[x][y] = 4;
+    }
+    x = 0;
+    y = -1;
+    e = 0;
+    vector<int> tt;
+    int k = 0;
+    while(!st.empty()){
+        if(st.top().second > 3) {
+            score += st.top().first*st.top().second;
+            st.pop();
+            continue;
+        }
+        tt.push_back(st.top().second);
+        tt.push_back(st.top().first);
+        st.pop();
+    }
+    int cnt = tt.size(), cnt2 = n*n;
+    while(1){
+        cnt2--;
+        int nx = x + dx[e];
+        int ny = y + dy[e];
+        if(nx < 0 || nx>=n || ny < 0 || ny >= n || t[nx][ny] != 0) e = (1+e)%4;
+        x += dx[e];
+        y += dy[e];
+        t[x][y] = 4;
+        if(x == s && y == s) break;
+        if(cnt2 > cnt) continue;
+        t[x][y] = tt[cnt2-1];
+    }
+
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            if(t[i][j] == 4) t[i][j] = 0;
+        }
+    }
+    v = t;
+    ans += score;
+}
+
+int main() {
+
+    ios::sync_with_stdio(false);
+    cin.tie(0); cout.tie(0);
+
+    cin>>n>>m;
+    s = n/2;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            cin>>v[i][j];
+        }
+    }
+    for(int i = 0; i < m; i++){
+        cin>>d>>p;
+        solve();
+    }
+    cout<<ans;
+    return 0;
+}
