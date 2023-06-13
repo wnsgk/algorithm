@@ -1,91 +1,70 @@
-#include <vector>
-#include <iostream>
+#include <bits/stdc++.h>
 
 using namespace std;
+int depth[100001];
+int parent[100001][17];
+vector<int> v[100001];
+int n;
 
-vector<vector<int>> v(100001);
-vector<vector<int>> ac(50001, vector<int>(17,-1));
-vector<int> depth(50001, -1);
-int n, m;
+void dfs(int cur, int p){
+    parent[cur][0] = p;
+    depth[cur] = depth[p]+1;
+    for(int i = 0; i < v[cur].size(); i++){
+        if(v[cur][i] == p) continue;
+        
+        dfs(v[cur][i], cur);
+    }
+}
 
-void dfs(int node)
-{
-    for(int i = 0; i < v[node].size(); i++)
-    {
-        int next = v[node][i];
-        if(ac[next][0] == -1) 
-        {
-            ac[next][0] = node;
-            depth[next] = depth[node]+1;
-            dfs(next);
+void make_lca(){
+    for(int i = 1; i < 17; i++){
+        for(int j = 1; j <= n; j++){
+            parent[j][i] = parent[parent[j][i-1]][i-1];
         }
     }
 }
 
-int find_LCA(int u, int t)
-{
-    if(depth[u] < depth[t])
-    {
-        int tmp = u;
-        u = t;
-        t = tmp;
-    }
-    
-    int diff = depth[u] - depth[t];
-    for(int i = 0; diff != 0; i++)
-    {
-        if(diff%2 == 1) u = ac[u][i];
-        diff/=2;
-    }
-    
-    if(u != t)
-    {
-        for(int i = 16; i >= 0; i--)
-        {
-            if(ac[u][i] != -1 && ac[u][i] != ac[t][i])
-            {
-                u = ac[u][i];
-                t = ac[t][i];
-            }
-    
+int lca(int a, int b){
+    if(depth[a] < depth[b]) return lca(b, a);
+    while(depth[a] != depth[b]){
+        int x = depth[a] - depth[b];
+        int idx = -1;
+        for(int i = 1; i <= x; i*=2){
+            idx++;
         }
-        return ac[u][0];
+        a = parent[a][idx];
     }
-    return u;
-}
-
-void connect()
-{
-    for(int i = 1; i < 17; i++)
-    {
-        for(int j = 1; j <= n; j++)
-        {
-            ac[j][i] = ac[ac[j][i-1]][i-1];
+    while(a != b){
+        int idx = 0;
+        for(int i = 0; parent[a][i] != parent[b][i]; i++){
+            idx = i;
         }
+        a = parent[a][idx];
+        b = parent[b][idx];
     }
+    return a;
 }
-
-int main(){
+                
+int main()
+{
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
     
+    int m, a, b;
     cin>>n;
-    int x, y;
-    for(int i = 1; i < n; i++)
-    {
-       cin>>x>>y;
-        v[x].push_back(y);
-        v[y].push_back(x);
+    for(int i = 0; i < n-1; i++){
+        cin>>a>>b;
+        v[a].push_back(b);
+        v[b].push_back(a);
     }
-    depth[1] = 0;
-    ac[1][0] = 1;
-    dfs(1);
-    connect();
+    depth[1] = 1;
+    dfs(1, 0);
+    make_lca();
     cin>>m;
-    while(m--){
-        cin>>x>>y;
-        cout<<find_LCA(x, y)<<"\n";
+    for(int i = 0; i < m; i++){
+        cin>>a>>b;
+        cout<<lca(a,b)<<"\n";
     }
     return 0;
 }
